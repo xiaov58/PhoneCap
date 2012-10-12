@@ -1,0 +1,83 @@
+﻿1. pcap.h not found
+
+
+sudo apt-get install libpcap0.8-dev
+
+
+2. arm-none-xxxx-gcc not found
+
+
+sudo apt-get apt-get install ia32-libs  (it is 64-bit system compatible problem)
+
+
+3. .text(xxxx) undifined
+
+
+add “-lpcap” when compiling
+
+
+4.  cross compile can not find pcap.h 
+
+
+need to cross-compile “libpcap”
+
+
+
+
+note: 
+sudo apt -get install byacc flex 
+armgcc -static -o xxxx xxxx.c -lpcap (may have warning)
+adb shell ls /sys/class/net (list android network interface)
+(adb commands)
+adb root
+adb remount (mount -o remount,rw /system)
+adb push xxxx xxxx
+adb shell chmod 777 xxx
+
+
+
+
+How to set up arm-gcc cross-compile  platform?
+
+
+1. Download source file
+https://sourcery.mentor.com/sgpp/lite/arm/portal/package3397/public/arm-none-linux-gnueabi/arm-2008q3-41-arm-none-linux-gnueabi-i686-pc-linux-gnu.tar.bz2
+
+
+2. Untar and mv to “~/Documents/Tools”
+
+
+3. Add “~/Documents/Tools/arm-2008q3/bin” to environment path, 
+make alias “alias armgcc='arm-none-linux-gnueabi-gcc”
+
+
+How to cross compile libpcap(1.0.0)?
+
+
+1. Download source file
+http://www.tcpdump.org/
+
+
+2. Untar and mv to “~/Documents/Tools”
+
+
+3. “cd /home/xiaov/Documents/Tools/libpcap-1.0.0”
+4. Modify “configure”
+#if test -z "$with_pcap" && test "$cross_compiling" = yes; then 
+# { { echo "$as_me:$LINENO: error: pcap type not determined when cross-compiling; use --with-pcap=..." >&5 
+#echo "$as_me: error: pcap type not determined when cross-compiling; use --with-pcap=..." >&2;} 
+#   { (exit 1); exit 1; }; } 
+#fi 
+....... 
+# if test $ac_cv_linux_vers = unknown ; then 
+#   { { echo "$as_me:$LINENO: error: cannot determine linux version when cross-compiling" >&5 
+#echo "$as_me: error: cannot determine linux version when cross-compiling" >&2;} 
+#   { (exit 1); exit 1; }; } 
+# fi
+
+
+5. Modify “Makefile”
+prefix=”prefix = /home/xiaov/Documents/Tools/arm-2008q3/arm-none-linux-gnueabi”
+
+
+6. make && make install
